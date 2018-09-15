@@ -833,6 +833,31 @@ pub fn canonicalize(p: &Path) -> io::Result<PathBuf> {
     Ok(PathBuf::from(OsString::from_vec(buf)))
 }
 
+pub fn normalize(p: &Path) -> PathBuf {
+    let vec_pop = |mut vec: Vec<String>| {
+        vec.pop();
+        vec
+    };
+    let vec_push = |mut vec: Vec<String>, item: String| {
+        vec.push(item);
+        vec
+    };
+    let pathbuf_push = |mut pb: PathBuf, item: &String| {
+        pb.push(item.clone());
+        pb
+    };
+    
+    p.iter()
+        .fold(Vec::<String>::new(), |acc, item| {
+            match item.to_str().unwrap() {
+                ".." => vec_pop(acc),
+                _ => vec_push(acc, item.to_os_string().into_string().unwrap()),
+            }
+        })
+        .iter()
+        .fold(PathBuf::new(), |acc, item| pathbuf_push(acc, item)))
+}
+
 #[cfg(not(any(target_os = "linux", target_os = "android")))]
 pub fn copy(from: &Path, to: &Path) -> io::Result<u64> {
     use fs::File;

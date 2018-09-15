@@ -1745,6 +1745,13 @@ pub fn canonicalize<P: AsRef<Path>>(path: P) -> io::Result<PathBuf> {
     fs_imp::canonicalize(path.as_ref())
 }
 
+/// This is probably a really bad idea
+#[unstable(feature = "kookies_mad_bullshit", issue = "lolwut")]
+pub fn normalize<P: AsRef<Path>>(path: P) -> PathBuf {
+    fs_imp::normalize(path.as_ref())
+}
+
+
 /// Creates a new, empty directory at the provided path
 ///
 /// # Platform-specific behavior
